@@ -49,15 +49,40 @@ namespace Assignment3.Controllers
             return View();
         }
 
+        public async Task<IActionResult> GetActorPhoto(int id)
+        {
+            var actor = await _context.Actor
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (actor == null)
+            {
+                return NotFound();
+            }
+            var imgData = actor.ActorPhoto;
+
+            return File(imgData, "image/jpg");
+        }
+
         // POST: Actors/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Gender,Age,IMBDHyperlink,ActorPhoto")] Actor actor)
+        public async Task<IActionResult> Create([Bind("Id,Name,Gender,Age,IMBDHyperlink,ActorPhoto")] Actor actor, IFormFile ActorPhoto)
         {
+            ModelState.Remove(nameof(actor.ActorPhoto));
+
             if (ModelState.IsValid)
             {
+                if (ActorPhoto != null)
+                {
+                    var memoryStream = new MemoryStream();
+                    await ActorPhoto.CopyToAsync(memoryStream);
+                    actor.ActorPhoto = memoryStream.ToArray();
+                } 
+                else
+                {
+                    actor.ActorPhoto = new byte[0];
+                }
                 _context.Add(actor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

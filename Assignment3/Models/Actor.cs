@@ -15,6 +15,6 @@ namespace Assignment3.Models
         public string IMBDHyperlink { get; set; }
         [Display(Name = "Actor Photo")]
         public byte[] ActorPhoto { get; set; }
-        public ICollection<Movie> Movies { get; } = new List<Movie>();
+        public List<Movie> Movies { get; set; } = [];
     }
 }

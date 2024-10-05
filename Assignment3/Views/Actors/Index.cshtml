@@ -46,7 +46,10 @@
                 @Html.DisplayFor(modelItem => item.IMBDHyperlink)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ActorPhoto)
+                    @if (item.ActorPhoto != null && item.ActorPhoto.Length != 0)
+                    {
+                        <img src="@Url.Action("GetActorPhoto", "Actors", new {item.Id})" />
+                    }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
