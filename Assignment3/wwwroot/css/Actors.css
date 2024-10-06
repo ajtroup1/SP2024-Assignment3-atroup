@@ -1,0 +1,16 @@
+﻿body {
+}
+
+.top-container {
+    display: flex;
+}
+
+.actor-details {
+    width: 50%;
+}
+
+.actor-sentiment-container {
+    background-color: red;
+    width: 50%;
+    float: right;
+}

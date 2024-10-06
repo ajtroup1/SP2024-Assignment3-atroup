@@ -1,4 +1,4 @@
-﻿@model Assignment3.Models.Actor
+﻿@model Assignment3.Models.ActorDetails
 
 @{
     ViewData["Title"] = "Details";
@@ -6,41 +6,42 @@
 
 <h1>Details</h1>
 
-<div>
+<div class="top-container">
+<div class="actor-details">
     <h4>Actor</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Actor.Name)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Actor.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
+            @Html.DisplayNameFor(model => model.Actor.Gender)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gender)
+            @Html.DisplayFor(model => model.Actor.Gender)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Age)
+            @Html.DisplayNameFor(model => model.Actor.Age)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Age)
+            @Html.DisplayFor(model => model.Actor.Age)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IMBDHyperlink)
+            @Html.DisplayNameFor(model => model.Actor.IMBDHyperlink)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IMBDHyperlink)
+            @Html.DisplayFor(model => model.Actor.IMBDHyperlink)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ActorPhoto)
+            @Html.DisplayNameFor(model => model.Actor.ActorPhoto)
         </dt>
         <dd class="col-sm-10">
-            @if (Model.ActorPhoto != null && Model.ActorPhoto.Length > 0)
+            @if (Model.Actor.ActorPhoto != null && Model.Actor.ActorPhoto.Length > 0)
             {
-                <img src="@Url.Action("GetActorPhoto", "Actors", new { id = Model.Id })" alt="Actor Photo" class="img-thumbnail" />
+                <img src="@Url.Action("GetActorPhoto", "Actors", new { id = Model.Actor.Id })" alt="Actor Photo" class="img-thumbnail" />
             }
             else
             {
@@ -50,7 +51,58 @@
 
     </dl>
 </div>
+
+<div class="actor-sentiment-container">
+    <p>asmdkamsk</p>
+</div>
+</div>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.Actor.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+<h2>Overall Sentiment Analysis Score: @Model.OverallSentiment.ToString("F3") (@Model.SentimentString)</h2>
+
+<h3>Sentiment Analysis from Reddit Posts</h3>
+<table class="table movie-reddit" id="sentimentTable">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Sentiment Score</th>
+            <th>Sentiment (string)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.SentimentResults != null)
+        {
+            foreach (var result in Model.SentimentResults as List<SentimentResult>)
+            {
+                <tr>
+                    <td>@result.Title</td>
+                    <td>@result.Content</td>
+                    <td>@result.SentimentScore.ToString("F2")</td>
+                    <td>@result.SentimentString</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        let table = new DataTable('#sentimentTable', {
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            lengthChange: false,
+            pageLength: 10
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    console.log(@Html.Raw(Json.Serialize(Model)));
+</script>

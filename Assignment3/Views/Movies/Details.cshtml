@@ -1,4 +1,4 @@
-﻿@model Assignment3.Models.Movie
+﻿@model Assignment3.Models.MovieDetails
 
 @{
     ViewData["Title"] = "Details";
@@ -10,33 +10,79 @@
     <h4>Movie</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Movie.Title)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Movie.Title)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Genre)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Movie.Genre)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Genre)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Movie.Genre)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReleaseDate)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Movie.ReleaseDate)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReleaseDate)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Movie.ReleaseDate)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReleasedBy)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Movie.ReleasedBy)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReleasedBy)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Movie.ReleasedBy)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.Movie.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+<h2>Overall Sentiment Analysis Score: @Model.OverallSentiment.ToString("F3") (@Model.SentimentString)</h2>
+
+<h3>Sentiment Analysis from Reddit Posts</h3>
+<table class="table movie-reddit" id="sentimentTable">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Sentiment Score</th>
+            <th>Sentiment (string)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.SentimentResults != null)
+        {
+            foreach (var result in Model.SentimentResults as List<SentimentResult>)
+            {
+                <tr>
+                    <td>@result.Title</td>
+                    <td>@result.Content</td>
+                    <td>@result.SentimentScore.ToString("F2")</td>
+                    <td>@result.SentimentString</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        let table = new DataTable('#sentimentTable', {
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            lengthChange: false,
+            pageLength: 10
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    console.log(@Html.Raw(Json.Serialize(Model)));
+</script>
+
