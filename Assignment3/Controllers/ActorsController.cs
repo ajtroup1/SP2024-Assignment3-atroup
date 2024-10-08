@@ -242,11 +242,9 @@ namespace Assignment3.Controllers
         }
 
         // POST: Actors/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Gender,Age,IMBDHyperlink,ActorPhoto")] Actor actor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Gender,Age,IMBDHyperlink")] Actor actor, IFormFile ActorPhoto)
         {
             if (id != actor.Id)
             {
@@ -257,6 +255,15 @@ namespace Assignment3.Controllers
             {
                 try
                 {
+                    if (ActorPhoto != null && ActorPhoto.Length > 0)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await ActorPhoto.CopyToAsync(memoryStream);
+                            actor.ActorPhoto = memoryStream.ToArray(); // Update the MovieCover if a new file is uploaded
+                        }
+                    }
+                    // If no new cover is uploaded, keep the existing one in the database
                     _context.Update(actor);
                     await _context.SaveChangesAsync();
                 }
@@ -275,6 +282,7 @@ namespace Assignment3.Controllers
             }
             return View(actor);
         }
+
 
         // GET: Actors/Delete/5
         public async Task<IActionResult> Delete(int? id)

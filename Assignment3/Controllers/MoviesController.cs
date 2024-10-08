@@ -10,6 +10,7 @@ using Assignment3.Models;
 using System.Text.Json;
 using System.Web;
 using VaderSharp2;
+using System.Numerics;
 
 namespace Assignment3.Controllers
 {
@@ -77,10 +78,10 @@ namespace Assignment3.Controllers
                 return NotFound();
             }
 
-            // Search Reddit for posts related to the movie title
+            var actors = await _context.Actor.ToListAsync();
+
             var redditPosts = await SearchRedditAsync(movie.Title);
 
-            // Perform sentiment analysis on the Reddit posts using VaderSharp2
             var analyzer = new SentimentIntensityAnalyzer();
             var sentimentResults = new List<SentimentResult>();
             double overallSentiment = 0;
@@ -110,13 +111,13 @@ namespace Assignment3.Controllers
             double averageSentiment = count > 0 ? overallSentiment / count : 0;
             string sentimentString = CategorizeSentiment(averageSentiment);
 
-            // Create the ViewModel instance and pass it to the view
             var viewModel = new MovieDetails
             {
                 Movie = movie,
                 SentimentResults = sentimentResults,
                 OverallSentiment = averageSentiment,
-                SentimentString = sentimentString
+                SentimentString = sentimentString,
+                Actors = actors
             };
 
             return View(viewModel);
@@ -165,16 +166,30 @@ namespace Assignment3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Genre,ReleaseDate,ReleasedBy")] Movie movie)
+        public async Task<IActionResult> Create(Movie movie, IFormFile MovieCover)
         {
             if (ModelState.IsValid)
             {
+                if (MovieCover != null && MovieCover.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await MovieCover.CopyToAsync(memoryStream);
+                        movie.MovieCover = memoryStream.ToArray();
+                    }
+                }
+                else
+                {
+                    movie.MovieCover = new byte[0]; // Or leave as null if preferred
+                }
+
                 _context.Add(movie);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(movie);
         }
+
 
         // GET: Movies/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -189,15 +204,18 @@ namespace Assignment3.Controllers
             {
                 return NotFound();
             }
-            return View(movie);
+
+            return View(movie); // Pass the movie to the view
         }
+
 
         // POST: Movies/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Movies/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Genre,ReleaseDate,ReleasedBy")] Movie movie)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Genre,ReleaseDate,ReleasedBy")] Movie movie, IFormFile MovieCover)
         {
             if (id != movie.Id)
             {
@@ -208,6 +226,15 @@ namespace Assignment3.Controllers
             {
                 try
                 {
+                    if (MovieCover != null && MovieCover.Length > 0)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await MovieCover.CopyToAsync(memoryStream);
+                            movie.MovieCover = memoryStream.ToArray(); // Update the MovieCover if a new file is uploaded
+                        }
+                    }
+                    // If no new cover is uploaded, keep the existing one in the database
                     _context.Update(movie);
                     await _context.SaveChangesAsync();
                 }
@@ -226,6 +253,7 @@ namespace Assignment3.Controllers
             }
             return View(movie);
         }
+
 
         // GET: Movies/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -264,5 +292,21 @@ namespace Assignment3.Controllers
         {
             return _context.Movie.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> GetMovieCover(int id)
+        {
+            var movie = await _context.Movie
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            var imgData = movie.MovieCover;
+
+            Console.WriteLine("DATA: "+imgData);
+
+            return File(imgData, "image/jpg");
+        }
+
     }
 }

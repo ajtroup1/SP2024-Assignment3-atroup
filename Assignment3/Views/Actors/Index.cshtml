@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Actors</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -43,12 +43,12 @@
                 @Html.DisplayFor(modelItem => item.Age)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IMBDHyperlink)
+                    <a href=@Html.DisplayFor(modelItem => item.IMBDHyperlink) target="_blank">IMDB Link</a>
             </td>
             <td>
                     @if (item.ActorPhoto != null && item.ActorPhoto.Length != 0)
                     {
-                        <img src="@Url.Action("GetActorPhoto", "Actors", new {item.Id})" />
+                        <img src="@Url.Action("GetActorPhoto", "Actors", new {item.Id})" class="img-thumbnail"/>
                     }
             </td>
             <td>

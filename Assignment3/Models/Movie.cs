@@ -14,6 +14,9 @@ namespace Assignment3.Models
         public DateOnly ReleaseDate { get; set; }
         [Display(Name = "Released By")]
         public string ReleasedBy { get; set; }
-        public List<Actor> Actors { get; set; } = [];
+        [Display(Name = "Movie Cover")]
+        public byte[]? MovieCover { get; set; }
+        public ICollection<ActorMovie> ActorMovies { get; set; } = new List<ActorMovie>();
+
     }
 }

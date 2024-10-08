@@ -6,6 +6,7 @@
         public List<SentimentResult> SentimentResults { get; set; }
         public double OverallSentiment { get; set; }
         public string SentimentString { get; set; }
+        public List<Actor> Actors { get; set; }
     }
 
 }

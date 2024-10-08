@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Movies</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -24,6 +24,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.ReleasedBy)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MovieCover)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -42,6 +45,13 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ReleasedBy)
             </td>
+            <td>
+                @if (item.MovieCover != null && item.MovieCover.Length != 0)
+                {
+                    <img src="@Url.Action("GetMovieCover", "Movies", new {item.Id})" class="img-thumbnail" />
+                }
+            </td>
+
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

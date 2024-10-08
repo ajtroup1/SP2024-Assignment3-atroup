@@ -33,7 +33,7 @@
             @Html.DisplayNameFor(model => model.Actor.IMBDHyperlink)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Actor.IMBDHyperlink)
+            <a href=@Html.DisplayFor(model => model.Actor.IMBDHyperlink) target="_blank">IMDB Link</a>
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Actor.ActorPhoto)
@@ -52,9 +52,6 @@
     </dl>
 </div>
 
-<div class="actor-sentiment-container">
-    <p>asmdkamsk</p>
-</div>
 </div>
 
 <div>
@@ -62,7 +59,7 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<h2>Overall Sentiment Analysis Score: @Model.OverallSentiment.ToString("F3") (@Model.SentimentString)</h2>
+<h2 class="sentiment-header">Overall Sentiment Analysis Score: @Model.OverallSentiment.ToString("F3") (@Model.SentimentString)</h2>
 
 <h3>Sentiment Analysis from Reddit Posts</h3>
 <table class="table movie-reddit" id="sentimentTable">
